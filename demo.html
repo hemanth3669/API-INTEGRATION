@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px; /* Added max-width for better readability on larger screens */
+            width: 100%; /* Take up 100% of available width in its container */
+        }
+
+        #weather-info {
+            margin-top: 20px;
+        }
+
+        #loading {
+            color: #555;
+        }
+
+        #error {
+            color: red;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+        }
+
+        /* For the Completion Certificate */
+        .certificate {
+            margin-top: 20px;
+            font-style: italic;
+            color: #888;
+            text-align: center; /* Center the certificate text */
+        }
+        .codtech-logo {
+            width: 100px; /* Adjust as needed */
+            margin-top: 10px;
+            display: block; /* Ensure proper margins */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Weather Information</h1>
+        <div id="loading">Loading weather data...</div>
+        <div id="error"></div>
+        <div id="weather-info"></div>
+
+        <div class="certificate">
+            Completion Certificate will be issued on your internship end date.
+        </div>
+        <img src="codtech_logo.png" alt="Codtech Logo" class="codtech-logo">
+    </div>
+
+    <script>
+        // Replace with your actual API key.  Sign up at openweathermap.org
+        const apiKey = "41d142eac00b877ae730d064fd4ff9d2"; // Replace with YOUR API KEY
+
+        const weatherInfoDiv = document.getElementById("weather-info");
+        const loadingDiv = document.getElementById("loading");
+        const errorDiv = document.getElementById("error");
+
+        async function fetchWeatherData() {
+            try {
+                // Replace with your desired city.  For now, default to London.
+                const city = "London"; // You can make this configurable by adding an input box and getting the value.
+                const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`; // Use metric units for Celsius
+
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                displayWeatherData(data);
+
+            } catch (error) {
+                console.error("Error fetching weather data:", error);
+                errorDiv.textContent = "Failed to load weather data.  Please check your API key and network connection.";
+            } finally {
+                loadingDiv.style.display = "none"; // Hide loading message regardless of success/failure
+            }
+        }
+
+        function displayWeatherData(data) {
+            weatherInfoDiv.innerHTML = `
+                <h2>${data.name}, ${data.sys.country}</h2>
+                <p>Temperature: ${data.main.temp} °C</p>
+                <p>Description: ${data.weather[0].description}</p>
+                <p>Humidity: ${data.main.humidity}%</p>
+                <p>Wind Speed: ${data.wind.speed} m/s</p>
+                <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="Weather Icon">
+            `;
+        }
+
+        // Call the function to fetch data when the page loads.
+        fetchWeatherData();
+
+    </script>
+
+</body>
+</html>
